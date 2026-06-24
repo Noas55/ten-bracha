@@ -69,6 +69,7 @@ export default defineConfig(({ command }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    base: '/ten-bracha/',
     server: {
       host: '0.0.0.0', // Listen on all network interfaces.
       port: parseInt(process.env.VITE_PORT || '3000'),
