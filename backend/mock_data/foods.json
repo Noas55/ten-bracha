@@ -1,0 +1,20 @@
+[
+    {
+        "food_name": "sweet_bun",
+        "category": "לחמנייה מתוקה",
+        "tradition": "ספרד",
+        "first_blessing": "המוציא",
+        "last_blessing": "ברכת המזון",
+        "note": "לפי מנהג ספרד - קרוב למנהג אשכנז",
+        "requires_clarification": false
+    },
+    {
+        "food_name": "sweet_bun",
+        "category": "לחמנייה מתוקה",
+        "tradition": "עדות המזרח",
+        "first_blessing": "מזונות",
+        "last_blessing": "על המחיה",
+        "note": "לפי מנהג עדות המזרח",
+        "requires_clarification": false
+    }
+]

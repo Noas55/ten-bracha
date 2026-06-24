@@ -1,0 +1,45 @@
+{
+    "title": "foods",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "food_name": {
+            "type": "string",
+            "description": "English name of the food"
+        },
+        "category": {
+            "type": "string",
+            "description": "Halachic category of the food"
+        },
+        "tradition": {
+            "type": "string",
+            "description": "Which tradition this applies to (all/ashkenaz/sephardi/chabad)"
+        },
+        "first_blessing": {
+            "type": "string",
+            "description": "The first blessing (bracha rishona)"
+        },
+        "last_blessing": {
+            "type": "string",
+            "description": "The last blessing (bracha acharona)"
+        },
+        "note": {
+            "type": "string",
+            "description": "Additional halachic notes"
+        },
+        "requires_clarification": {
+            "type": "boolean",
+            "description": "Whether this food requires follow-up questions",
+            "default": false
+        }
+    },
+    "required": [
+        "food_name",
+        "category",
+        "tradition",
+        "first_blessing",
+        "last_blessing"
+    ]
+}
