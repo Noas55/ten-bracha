@@ -25,18 +25,32 @@ export default function UploadPage() {
   }, []);
 
   const handleFileSelect = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) {
+    // Accept both standard images and HEIC (iPhone format)
+    const isImage = file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+    if (!isImage) {
       setError('אנא בחר קובץ תמונה בלבד');
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setError('גודל הקובץ חייב להיות עד 10MB');
+    if (file.size > 20 * 1024 * 1024) {
+      setError('גודל הקובץ חייב להיות עד 20MB');
       return;
     }
     setError('');
+    setProgressText('מכין תמונה...');
     const reader = new FileReader();
     reader.onload = (e) => {
-      setImage(e.target?.result as string);
+      const result = e.target?.result as string;
+      if (result) {
+        setImage(result);
+        setProgressText('');
+      } else {
+        setError('שגיאה בקריאת התמונה. נסה שוב.');
+        setProgressText('');
+      }
+    };
+    reader.onerror = () => {
+      setError('שגיאה בקריאת התמונה. נסה תמונה אחרת.');
+      setProgressText('');
     };
     reader.readAsDataURL(file);
   }, []);

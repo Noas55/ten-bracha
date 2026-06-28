@@ -192,26 +192,23 @@ export interface RecognitionResult {
 // ============================================================
 
 /**
- * Resize a base64 data URL image to reduce payload size for AI API
+ * Resize a base64 data URL image to reduce payload size for AI API.
+ * Mobile phones produce very large images (4000x3000+), so we aggressively
+ * resize and compress to ensure fast uploads even on cellular connections.
  */
 export function resizeImage(
   dataUrl: string,
-  maxWidth: number = 1024,
-  maxHeight: number = 1024,
-  quality: number = 0.85
+  maxWidth: number = 800,
+  maxHeight: number = 800,
+  quality: number = 0.7
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       let { width, height } = img;
 
-      // Only resize if larger than max dimensions
-      if (width <= maxWidth && height <= maxHeight) {
-        resolve(dataUrl);
-        return;
-      }
-
-      const ratio = Math.min(maxWidth / width, maxHeight / height);
+      // Always resize if larger than max dimensions (mobile photos are huge)
+      const ratio = Math.min(maxWidth / width, maxHeight / height, 1);
       width = Math.round(width * ratio);
       height = Math.round(height * ratio);
 
@@ -225,10 +222,17 @@ export function resizeImage(
       }
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Determine output format
-      const isJpeg = dataUrl.startsWith('data:image/jpeg') || dataUrl.startsWith('data:image/jpg');
-      const mimeType = isJpeg ? 'image/jpeg' : 'image/jpeg'; // Always use JPEG for smaller size
-      resolve(canvas.toDataURL(mimeType, quality));
+      // Always use JPEG for smallest size (critical for mobile)
+      const result = canvas.toDataURL('image/jpeg', quality);
+
+      // Safety check: if still too large (>2MB base64), compress more
+      const sizeInBytes = Math.round(result.length * 0.75);
+      if (sizeInBytes > 2 * 1024 * 1024) {
+        const moreCompressed = canvas.toDataURL('image/jpeg', 0.5);
+        resolve(moreCompressed);
+      } else {
+        resolve(result);
+      }
     };
     img.onerror = () => reject(new Error('Failed to load image for resizing'));
     img.src = dataUrl;
@@ -331,6 +335,18 @@ async function classifyWithMobileNet(dataUrl: string): Promise<FoodMatch[]> {
 // ============================================================
 
 /**
+ * Helper: wrap a promise with a timeout (critical for slow mobile connections)
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number, errorMsg: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(errorMsg)), ms)
+    ),
+  ]);
+}
+
+/**
  * Recognize food using AI (gemini-2.5-pro multimodal)
  */
 async function recognizeWithAI(dataUrl: string): Promise<FoodMatch[]> {
@@ -365,7 +381,7 @@ CRITICAL RULES:
 13. hebrew_name should be the Hebrew name of the food
 14. category should be one of: ירק, פרי העץ, פרי האדמה, משקה, בשר, דג, מאפה, לחם, יין, עוגה, שבעת המינים, קטניות, דגנים, ממתק, חלבי, תבשיל, מנה מורכבת`;
 
-  const response = await client.ai.gentxt({
+  const aiPromise = client.ai.gentxt({
     messages: [
       { role: 'system', content: systemPrompt },
       {
@@ -379,6 +395,12 @@ CRITICAL RULES:
     model: 'gemini-2.5-pro',
     stream: false,
   });
+
+  const response = await withTimeout(
+    aiPromise,
+    30000,
+    'זיהוי המאכל לוקח יותר מדי זמן. נסה שוב עם חיבור Wi-Fi או תמונה קטנה יותר.'
+  );
 
   const rawContent = response.data.content.trim();
 
