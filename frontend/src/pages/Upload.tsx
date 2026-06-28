@@ -1,10 +1,8 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@metagptx/web-sdk';
-
-const client = createClient();
+import { recognizeFood, preloadMobileNet } from '@/services/foodRecognition';
 
 export default function UploadPage() {
   const navigate = useNavigate();
@@ -13,10 +11,18 @@ export default function UploadPage() {
 
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [progressText, setProgressText] = useState('');
   const [error, setError] = useState('');
   const [dragOver, setDragOver] = useState(false);
+  const [modelReady, setModelReady] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    preloadMobileNet()
+      .then(() => setModelReady(true))
+      .catch(() => {});
+  }, []);
 
   const handleFileSelect = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -55,21 +61,18 @@ export default function UploadPage() {
     if (!image) return;
     setLoading(true);
     setError('');
+    setProgressText('מכין תמונה...');
 
     try {
-      const response = await client.apiCall.invoke({
-        url: '/api/v1/food/recognize',
-        method: 'POST',
-        data: { image },
-        options: { timeout: 600_000 },
+      const result = await recognizeFood(image, (step) => {
+        setProgressText(step);
       });
 
-      const result = response.data;
-      // Navigate to results page with data
       navigate('/results', {
         state: {
           matches: result.matches,
           rawDescription: result.raw_description,
+          modelUsed: result.model_used,
           tradition,
           image,
         },
@@ -79,19 +82,20 @@ export default function UploadPage() {
       setError(detail);
     } finally {
       setLoading(false);
+      setProgressText('');
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#faf8f5] via-white to-[#faf8f5] flex flex-col">
       {/* Header */}
       <header className="w-full py-4 px-4 flex items-center justify-between">
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="text-[#1e3a5f] font-medium"
+          className="text-[#1e3a5f] font-medium hover:bg-[#1e3a5f]/5 rounded-xl"
         >
-          ← חזרה
+          → חזרה
         </Button>
         <h1 className="text-xl font-bold text-[#1e3a5f]">צלם את המאכל</h1>
         <div className="w-16" />
@@ -104,22 +108,24 @@ export default function UploadPage() {
             <>
               {/* Upload Zone */}
               <Card
-                className={`upload-zone cursor-pointer transition-all ${dragOver ? 'drag-over' : ''}`}
+                className={`upload-zone cursor-pointer transition-all rounded-2xl ${dragOver ? 'drag-over' : ''}`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
-                  <div className="text-5xl mb-4">📸</div>
-                  <h3 className="text-lg font-semibold text-[#1e3a5f] mb-2">
+                <CardContent className="flex flex-col items-center justify-center py-20 px-6 text-center">
+                  <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#d4a843]/20 to-[#d4a843]/5 flex items-center justify-center mb-5">
+                    <span className="text-5xl">📸</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-[#1e3a5f] mb-2">
                     העלה תמונה של המאכל
                   </h3>
-                  <p className="text-sm text-[#1a1a2e]/60 mb-4">
+                  <p className="text-sm text-[#1a1a2e]/50 mb-4">
                     גרור תמונה לכאן או לחץ לבחירה
                   </p>
-                  <p className="text-xs text-[#1a1a2e]/40">
-                    JPG, PNG, WEBP - עד 10MB
+                  <p className="text-xs text-[#1a1a2e]/30">
+                    JPG, PNG, WEBP — עד 10MB
                   </p>
                 </CardContent>
               </Card>
@@ -127,10 +133,18 @@ export default function UploadPage() {
               {/* Camera Button */}
               <Button
                 onClick={() => cameraInputRef.current?.click()}
-                className="w-full py-5 text-lg font-bold bg-[#d4a843] hover:bg-[#d4a843]/90 text-white rounded-xl"
+                className="w-full py-6 text-lg font-bold bg-gradient-to-l from-[#d4a843] to-[#c49a38] hover:from-[#c49a38] hover:to-[#d4a843] text-white rounded-2xl shadow-lg shadow-[#d4a843]/20 transition-all duration-300"
               >
                 📷 צלם עכשיו
               </Button>
+
+              {/* Model Status */}
+              <div className="text-center">
+                <p className="text-xs text-[#1a1a2e]/30">
+                  {modelReady ? '✅ מודל זיהוי מקומי מוכן' : '⏳ טוען מודל זיהוי מקומי...'}
+                  {' • '}AI (gemini-2.5-pro) זמין
+                </p>
+              </div>
 
               {/* Hidden Inputs */}
               <input
@@ -158,11 +172,11 @@ export default function UploadPage() {
           ) : (
             <>
               {/* Image Preview */}
-              <Card className="overflow-hidden rounded-2xl shadow-lg">
+              <Card className="overflow-hidden rounded-2xl shadow-xl">
                 <img
                   src={image}
                   alt="תמונת המאכל"
-                  className="w-full h-64 object-cover"
+                  className="w-full h-72 object-cover"
                 />
               </Card>
 
@@ -174,14 +188,15 @@ export default function UploadPage() {
                     setImage(null);
                     setError('');
                   }}
-                  className="flex-1 py-5 text-base font-medium border-[#1e3a5f]/20 text-[#1e3a5f]"
+                  disabled={loading}
+                  className="flex-1 py-5 text-base font-medium border-2 border-[#1e3a5f]/10 text-[#1e3a5f] hover:bg-[#1e3a5f]/5 rounded-2xl"
                 >
-                  בחר תמונה אחרת
+                  תמונה אחרת
                 </Button>
                 <Button
                   onClick={handleAnalyze}
                   disabled={loading}
-                  className="flex-1 py-5 text-base font-bold bg-[#1e3a5f] hover:bg-[#1e3a5f]/90 text-white"
+                  className="flex-1 py-5 text-base font-bold bg-gradient-to-l from-[#1e3a5f] to-[#2d5a8e] hover:from-[#2d5a8e] hover:to-[#1e3a5f] text-white rounded-2xl shadow-lg shadow-[#1e3a5f]/20 transition-all duration-300"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -189,10 +204,10 @@ export default function UploadPage() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                      מזהה...
+                      {progressText || 'מזהה...'}
                     </span>
                   ) : (
-                    'זהה את המאכל'
+                    'זהה את המאכל ✨'
                   )}
                 </Button>
               </div>
@@ -200,8 +215,16 @@ export default function UploadPage() {
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-center">
               <p className="text-red-600 font-medium">{error}</p>
+              <Button
+                variant="ghost"
+                onClick={handleAnalyze}
+                className="mt-2 text-red-600 underline"
+                disabled={loading}
+              >
+                נסה שוב
+              </Button>
             </div>
           )}
         </div>
