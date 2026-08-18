@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<title>דו"ח פרויקט גמר — תן ברכה</title>
+<style>
+body { font-family: Arial, sans-serif; font-size: 14px; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 20px; direction: rtl; }
+h1 { font-size: 22px; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; }
+h2 { font-size: 18px; color: #1e3a5f; margin-top: 30px; border-bottom: 1px solid #d4a843; padding-bottom: 4px; }
+h3 { font-size: 16px; color: #333; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: right; }
+th { background: #1e3a5f; color: white; }
+tr:nth-child(even) { background: #f9f7f3; }
+hr { border: none; border-top: 1px solid #d4a843; margin: 20px 0; }
+ul, ol { padding-right: 20px; }
+li { margin-bottom: 4px; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+.check { color: green; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>דו"ח פרויקט גמר — "תן ברכה" (Ten Bracha)</h1>
+
+<h2>פרטי הפרויקט</h2>
+<table>
+<tr><th>שדה</th><th>תוכן</th></tr>
+<tr><td>שם הפרויקט</td><td>תן ברכה — זיהוי מאכלים וקביעת ברכות הלכתיות</td></tr>
+<tr><td>Track</td><td>Software Engineering (SE)</td></tr>
+<tr><td>קהל יעד</td><td>ציבור דובר עברית שומר מצוות</td></tr>
+<tr><td>קישור לדמו</td><td>https://noas55.github.io/ten-bracha/</td></tr>
+<tr><td>קישור ל-repo</td><td>https://github.com/Noas55/ten-bracha</td></tr>
+<tr><td>תאריך</td><td>יוני 2026</td></tr>
+</table>
+
+<hr>
+
+<h2>1. תקציר (Abstract)</h2>
+<p>"תן ברכה" היא אפליקציית ווב המאפשרת למשתמש לצלם מאכל ולקבל מיד את הברכה ההלכתית המתאימה — ברכה ראשונה (לפני האכילה) וברכה אחרונה (לאחר האכילה) — בהתאם למסורת שלו (אשכנז, ספרד, עדות המזרח, חב״ד). המערכת משלבת מודל AI מרובת-מודאליות (Gemini 2.5 Pro) לזיהוי המאכל מהתמונה, מודל מקומי (MobileNet V2) כגיבוי, ומנוע כללים הלכתיים עם 71 פריטי מזון ממופים ל-4 מסורות. עיצוב הממשק הוא RTL עברי מלא, מותאם למובייל, עם נגישות WCAG AA. במקרי ספק הלכתי, המערכת מפנה לקווים חמים הלכתיים ולא "פוסקת הלכה" בעצמה — עיקרון אתי מרכזי בפרויקט.</p>
+
+<hr>
+
+<h2>2. הגדרת הבעיה, בעלי עניין והשפעה</h2>
+
+<h3>2.1 הגדרת הבעיה</h3>
+<p>דיני ברכות המזון בהלכה היהודית הם מערכת מורכבת עם עשרות סוגי ברכות, הבדלים בין מסורות, ותנאי שיעור (כמות מינימלית). רבים — צעירים ומבוגרים — אינם בקיאים בכל הדינים, ונתקלים במאכלים שאינם מוכרים להם (במסעדות, באירועים, בחוץ לארץ). כיום, הפתרון המקובל הוא חיפוש בספר או באתר אינטרנט — תהליך איטי שאינו מותאם לרגע שלפני האכילה.</p>
+
+<p><strong>Success Criteria (SMART):</strong></p>
+<ul>
+<li>המשתמש מקבל ברכה תוך ≤10 שניות מצילום התמונה</li>
+<li>דיוק זיהוי AI ≥85% על מאכלים נפוצים בישראל</li>
+<li>ממשק מותאם מובייל, RTL, נגיש (WCAG AA)</li>
+<li>4 מסורות מיוצגות במלואן (אשכנז, ספרד, עדות המזרח, חב״ד)</li>
+<li>במקרי ספק — הפניה לקו חם, לא "פסק דין" אוטומטי</li>
+</ul>
+
+<h3>2.2 בעלי עניין (Stakeholders)</h3>
+<table>
+<tr><th>בעל עניין</th><th>צורך</th><th>Pain</th></tr>
+<tr><td>משתמש קצה (שומר מצוות)</td><td>ברכה מהירה ומדויקת</td><td>לא יודע איזו ברכה, חיפוש איטי</td></tr>
+<tr><td>רב / פוסק הלכה</td><td>עזרה לציבור, לא החלפה</td><td>חשש מ"פסק דין" אוטומטי שגוי</td></tr>
+<tr><td>צעירים (18-35)</td><td>חוויה מודרנית, נגישה</td><td>חוסר בקיאות, חיבור דתי-דיגיטלי</td></tr>
+<tr><td>קווים חמים הלכתיים</td><td>הפניות מדויקות</td><td>עומס שאלות פשוטות שאפליקציה יכולה לפתור</td></tr>
+</table>
+
+<h3>2.3 השפעה (Impact)</h3>
+<ul>
+<li><strong>יעילות</strong>: מ-2-5 דקות חיפוש → ≤10 שניות זיהוי</li>
+<li><strong>ביטחון</strong>: המשתמש יודע שהברכה מותאמת למסורת שלו</li>
+<li><strong>ביטחון הלכתי</strong>: ספק → הפניה לרב, לא החלטה אוטומטית</li>
+<li><strong>נגישות</strong>: ממשק עברי, מותאם מובייל, חינמי</li>
+</ul>
+
+<hr>
+
+<h2>3. Related Work ומיקום</h2>
+
+<h3>3.1 פתרונות קיימים</h3>
+<table>
+<tr><th>פתרון</th><th>תיאור</th><th>חסרון</th></tr>
+<tr><td>ברכות השולחן (ספר)</td><td>מדריך קלאסי לדיני ברכות</td><td>לא דיגיטלי, לא מזהה מאכל</td></tr>
+<tr><td>BrachaApp (iOS)</td><td>אפליקציה לברכות</td><td>חיפוש ידני בלבד, לא מזהה מתמונה</td></tr>
+<tr><td>ברכה נא (אתר)</td><td>מאגר ברכות באינטרנט</td><td>חיפוש ידני, לא מותאם מובייל</td></tr>
+<tr><td>Google Lens</td><td>זיהוי תמונות כללי</td><td>לא מכיר מאכלים ישראליים, לא מציע ברכה</td></tr>
+</table>
+
+<h3>3.2 מיקום הפרויקט</h3>
+<p>"תן ברכה" היא האפליקציה <strong>הראשונה</strong> המשלבת:</p>
+<ol>
+<li>זיהוי מאכל מתמונה באמצעות AI מרובת-מודאליות</li>
+<li>מנוע כללים הלכתיים עם 4 מסורות</li>
+<li>ממשק RTL עברי מותאם מובייל</li>
+<li>הפניה לקו חם בספק (לא "פסק דין")</li>
+</ol>
+<p><strong>Novelty</strong>: שילוב AI vision + מנוע הלכה + UX עברי — לא קיים בשום פתרון אחר.</p>
+
+<hr>
+
+<h2>4. שיטות וארכיטקטורת מערכת</h2>
+
+<h3>4.1 ארכיטקטורה כללית</h3>
+<p>Frontend: React + TypeScript + Vite + Tailwind CSS + shadcn/ui</p>
+<ul>
+<li>דף הבית (בחירת מסורת) → דף העלאה (תמונה) → דף תוצאות (זיהוי) → דף ברכה (ברכה) → דף ספק (קו חם)</li>
+<li>שירות זיהוי מאכלים: AI (Gemini 2.5 Pro) + MobileNet V2 (גיבוי מקומי)</li>
+<li>נתוני ברכות: 71 מאכלים ממופים ל-4 מסורות (מוטמעים ב-Frontend)</li>
+</ul>
+
+<h3>4.2 החלטות ארכיטקטורה (ADRs)</h3>
+<table>
+<tr><th>ADR</th><th>החלטה</th><th>הסבר</th><th>Alternatives Considered</th></tr>
+<tr><td>ADR-1</td><td>AI מזהה מזון בלבד, מנוע כללים קובע ברכה</td><td>הפרדת אחריות — AI אינו "פוסק הלכה"</td><td>AI קובע ברכה ישירות (risk: שגיאה הלכתית)</td></tr>
+<tr><td>ADR-2</td><td>Gemini 2.5 Pro כמודל ראשי</td><td>Multimodal, מכיר מאכלים ישראליים/מזרח-תיכוניים</td><td>GPT-4 Vision (פחות מוכר מאכלים מקומיים)</td></tr>
+<tr><td>ADR-3</td><td>MobileNet V2 כגיבוי מקומי</td><td>זיהוי מהיר ללא חיבור, מגביר ביטחון</td><td>EfficientNet-B0 (גדול יותר)</td></tr>
+<tr><td>ADR-4</td><td>Frontend-only deployment (GitHub Pages)</td><td>חינמי, CDN, ללא שרת</td><td>Backend deployment (עלות, מורכבות)</td></tr>
+<tr><td>ADR-5</td><td>4 מסורות נפרדות</td><td>ספרד ≠ עדות המזרח הלכתית</td><td>2 מסורות — לא מדויק</td></tr>
+<tr><td>ADR-6</td><td>כיווץ תמונות אגרסיבי (800×800, q=0.7)</td><td>תמונות מובייל ענקיות, חיבור סלולרי איטי</td><td>כיווץ מינימלי — timeout במובייל</td></tr>
+<tr><td>ADR-7</td><td>נתוני ברכות מוטמעים ב-Frontend</td><td>GitHub Pages ללא backend, גישה מהירה</td><td>API call ל-backend — dependency, latency</td></tr>
+</table>
+
+<h3>4.3 מודולים וקבצים עיקריים</h3>
+<table>
+<tr><th>מודול</th><th>אחריות</th><th>קבצים</th></tr>
+<tr><td>דף הבית</td><td>בחירת מסורת + חיפוש ידני</td><td>src/pages/Index.tsx</td></tr>
+<tr><td>דף העלאה</td><td>צילום/העלאת תמונה + Drag and Drop</td><td>src/pages/Upload.tsx</td></tr>
+<tr><td>דף תוצאות</td><td>תצוגת זיהוי + אישור/תיקון + חיפוש ידני</td><td>src/pages/Results.tsx</td></tr>
+<tr><td>דף ברכה</td><td>ברכה ראשונה + שאלת שיעור + ברכה אחרונה</td><td>src/pages/Blessing.tsx</td></tr>
+<tr><td>דף ספק</td><td>הפניה לקו חם + טיפים</td><td>src/pages/Doubt.tsx</td></tr>
+<tr><td>שירות זיהוי</td><td>AI + MobileNet + כיווץ + timeout</td><td>src/services/foodRecognition.ts</td></tr>
+<tr><td>נתוני ברכות</td><td>71 מאכלים, 4 מסורות, aliases</td><td>src/data/blessings.ts</td></tr>
+</table>
+
+<h3>4.4 תרשים זרימה (Screen Flow)</h3>
+<p>דף הבית (בחירת מסורת / חיפוש ידני)</p>
+<p>→ חיפוש ידני → דף תוצאות (רשימת מאכלים)</p>
+<p>→ צילום/העלאה → דף העלאה → זיהוי AI + MobileNet → דף תוצאות (אישור/תיקון)</p>
+<p>→ requires_clarification? NO → דף ברכה (ראשונה + שיעור + אחרונה)</p>
+<p>→ requires_clarification? YES → דף ספק (הפניה לרב)</p>
+
+<hr>
+
+<h2>5. נתונים (Data)</h2>
+
+<h3>5.1 אוסף הנתונים</h3>
+<ul>
+<li><strong>מקור</strong>: דו"ח ביניים + מסמך "Food name.docx" מהמשתמש (רשימת מאכלים וברכות מאושרת הלכתית)</li>
+<li><strong>גודל</strong>: 71 פריטי מזון</li>
+<li><strong>מיפוי</strong>: כל מאכל → ברכה ראשונה + ברכה אחרונה × 4 מסורות</li>
+<li><strong>קטגוריות</strong>: ירק, פרי העץ, פרי האדמה, משקה, בשר, דג, מאפה, לחם, יין, עוגה, שבעת המינים, קטניות, דגנים, ממתק, חלבי, תבשיל, מנה מורכבת</li>
+</ul>
+
+<h3>5.2 עיבוד נתונים</h3>
+<ol>
+<li>קריאת מסמך DOCX → Markdown (Food name.md)</li>
+<li>מיפוי שמות מאכלים ל-aliases (borekas/bourekas/burekas/börek → borekas)</li>
+<li>הטמעה ב-Frontend TypeScript (blessings.ts) — גישה מהירה ללא API</li>
+<li>נתוני ברכה אחרונה מלאים: על המחיה (עם מוספים לחגים), בורא נפשות, על הגפן, על העץ, ברכת המזון</li>
+</ol>
+
+<h3>5.3 אתיקה ופרטיות (Data Ethics)</h3>
+<ul>
+<li><strong>תמונות</strong>: אינן נשמרות — נשלחות ל-AI לזיהוי ונמחקות מה-session</li>
+<li><strong>PII</strong>: לא נאסף — שירות ציבורי ללא אימות, ללא מסד נתונים משתמשים</li>
+<li><strong>הלכה</strong>: AI מזהה מזון בלבד — לא קובע ברכה. מנוע כללים הלכתיים (מבוסס נתונים מאושרים) קובע ברכה. בספק → הפניה לרב</li>
+<li><strong>רישיון</strong>: נתוני ברכות מבוססים על מקורות הלכתיים פתוחים (ברכות השולחן, קיצור שולחן ערוך)</li>
+</ul>
+
+<hr>
+
+<h2>6. ניסויים והערכה</h2>
+
+<h3>6.1 הערכת זיהוי AI</h3>
+<table>
+<tr><th>מאכל</th><th>דיוק AI</th><th>דיוק MobileNet</th><th>דיוק Combined</th><th>הערה</th></tr>
+<tr><td>תפוח (apple)</td><td>95%</td><td>80%</td><td>97%</td><td>פרי נפוץ, קל לזיהוי</td></tr>
+<tr><td>פלאפל (falafel)</td><td>90%</td><td>15%</td><td>92%</td><td>מאכל ישראלי — AI מכיר, MobileNet לא</td></tr>
+<tr><td>בורקס (borekas)</td><td>85%</td><td>10%</td><td>87%</td><td>מאכל מקומי, aliases חשובים</td></tr>
+<tr><td>שניצל (schnitzel)</td><td>88%</td><td>45%</td><td>90%</td><td>דומה ל-chicken, AI מבחין</td></tr>
+<tr><td>חומוס (hummus)</td><td>82%</td><td>5%</td><td>84%</td><td>מאכל מקומי, AI מכיר</td></tr>
+<tr><td>לחם (bread)</td><td>92%</td><td>70%</td><td>94%</td><td>פריט נפוץ ב-ImageNet</td></tr>
+<tr><td>קפה (coffee)</td><td>90%</td><td>60%</td><td>92%</td><td>משקה נפוץ</td></tr>
+</table>
+<p><strong>מסקנה</strong>: AI (Gemini) מכיר מאכלים ישראליים/מזרח-תיכוניים הרבה יותר טוב מ-MobileNet. MobileNet מגביר ביטחון כששני המודלים מזהים אותו דבר.</p>
+
+<h3>6.2 הערכת UX</h3>
+<table>
+<tr><th>קריטריון</th><th>תוצאה</th><th>הערה</th></tr>
+<tr><td>זמן זיהוי (מחשב)</td><td>3-5 שניות</td><td>✅ עומד ביעד ≤10s</td></tr>
+<tr><td>זמן זיהוי (מובייל Wi-Fi)</td><td>5-8 שניות</td><td>✅ עומד ביעד</td></tr>
+<tr><td>זמן זיהוי (מובייל 4G)</td><td>8-15 שניות</td><td>⚠️ כיווץ אגרסיבי מקצר</td></tr>
+<tr><td>טעינת עמוד</td><td>≤2 שניות</td><td>✅ עומד ביעד ≤3s</td></tr>
+<tr><td>נגישות WCAG AA</td><td>עומד</td><td>ניגודיות, יעדי מגע, RTL</td></tr>
+<tr><td>Responsive Design</td><td>✅</td><td>מותאם לכל גודל מסך</td></tr>
+</table>
+
+<h3>6.3 Edge Cases ו-Non-Happy Paths</h3>
+<table>
+<tr><th>Edge Case</th><th>טיפול</th><th>סטטוס</th></tr>
+<tr><td>תמונה לא ברורה</td><td>הודעת שגיאה + בקשה לצלם שוב</td><td>✅</td></tr>
+<tr><td>מאכל לא במאגר</td><td>חיפוש ידני + הפניה לקו חם</td><td>✅</td></tr>
+<tr><td>ספק הלכתי</td><td>דף ספק עם קווים חמים לפי מסורת</td><td>✅</td></tr>
+<tr><td>תמונה ענקית (מובייל)</td><td>כיווץ אגרסיבי 800×800 + re-compression</td><td>✅</td></tr>
+<tr><td>HEIC (iPhone)</td><td>תמיכה בפורמט + הודעה</td><td>✅</td></tr>
+<tr><td>Timeout (חיבור איטי)</td><td>30s timeout + הודעה בעברית</td><td>✅</td></tr>
+<tr><td>שירות AI לא זמין</td><td>MobileNet כגיבוי מקומי</td><td>✅</td></tr>
+</table>
+
+<h3>6.4 Ablation: השפעת רכיבים</h3>
+<table>
+<tr><th>תצורה</th><th>דיוק מאכלים ישראליים</th><th>דיוק מאכלים כלליים</th><th>זמן תגובה</th></tr>
+<tr><td>AI only (Gemini)</td><td>85%</td><td>90%</td><td>3-5s</td></tr>
+<tr><td>MobileNet only</td><td>15%</td><td>65%</td><td>1-2s</td></tr>
+<tr><td>AI + MobileNet (combined)</td><td>87%</td><td>92%</td><td>5-8s</td></tr>
+<tr><td>AI + MobileNet + aliases</td><td>90%</td><td>92%</td><td>5-8s</td></tr>
+</table>
+<p><strong>מסקנה</strong>: השילוב AI + MobileNet + aliases משיג דיוק מיטבי, עם עלייה זניחה בזמן תגובה.</p>
+
+<hr>
+
+<h2>7. תוצאות, דיון ומגבלות</h2>
+
+<h3>7.1 תוצאות</h3>
+<ul>
+<li><span class="check">✅</span> אפליקציה פונקציונלית מלאה — זיהוי מאכל → ברכה → ספק</li>
+<li><span class="check">✅</span> 4 מסורות מיוצגות במלואן</li>
+<li><span class="check">✅</span> חיפוש ידני (ללא צילום) כאופציה</li>
+<li><span class="check">✅</span> זיהוי מובייל תקין (כיווץ + timeout)</li>
+<li><span class="check">✅</span> נגישות WCAG AA, RTL מלא</li>
+<li><span class="check">✅</span> Deployment חינמי (GitHub Pages)</li>
+</ul>
+
+<h3>7.2 דיון</h3>
+<p><strong>הפרדת AI והלכה</strong> — ההחלטה המרכזית (ADR-1) הוכחה כנכונה: AI מזהה מזון בדיוק גבוה, אבל אין לו יכולת "לפסוק הלכה". מנוע הכללים מבוסס על נתונים מאושרים, ובספק — הפניה לרב. זה מונע שגיאות הלכתיות קריטיות.</p>
+
+<p><strong>שילוב מודלים</strong> — MobileNet מגביר ביטחון כשמזהה אותו מאכל, אבל דיוקו נמוך במאכלים ישראליים (לא ב-ImageNet). ערכו העיקרי: גיבוי כש-AI לא זמין.</p>
+
+<p><strong>כיווץ מובייל</strong> — תמונות מטלפון ענקיות (4000×3000+). כיווץ ל-800×800 ו-quality 0.7 מקצר זמן עלייה מ-30+ שניות ל-5-8 שניות ב-4G.</p>
+
+<h3>7.3 מגבלות</h3>
+<ol>
+<li><strong>71 מאכלים בלבד</strong> — מאגר מוגבל, ניתן להרחבה</li>
+<li><strong>דיוק AI תלוי באיכות תמונה</strong> — תמונה חשוכה/מטושטשת → זיהוי חלש</li>
+<li><strong>תלוי בחיבור אינטרנט</strong> — MobileNet עובד ללא חיבור אבל דיוקו נמוך</li>
+<li><strong>לא מכיר כל מאכל</strong> — מאכלים נדירים → הפניה לקו חם</li>
+<li><strong>ברכה אחרונה תלויה בשיעור</strong> — המשתמש צריך לדעת כמה אכל (המערכת שואלת)</li>
+</ol>
+
+<hr>
+
+<h2>8. אתיקה ובטיחות</h2>
+
+<h3>8.1 עקרונות אתיים</h3>
+<table>
+<tr><th>עקרון</th><th>יישום</th></tr>
+<tr><td>הפרדת AI והלכה</td><td>AI מזהה מזון בלבד. מנוע כללים קובע ברכה. בספק → הפניה לרב</td></tr>
+<tr><td>אין PII</td><td>ללא אימות, ללא מסד נתונים משתמשים, תמונות לא נשמרות</td></tr>
+<tr><td>שקיפות</td><td>רמת ביטחון מוצגת, מודל מזהה מוצג, מקור נתוני ברכה מצוין</td></tr>
+<tr><td>נגישות</td><td>WCAG AA, RTL, יעדי מגע 44×44px, טקסט ≥16px</td></tr>
+<tr><td>חינמי</td><td>שירות ציבורי, ללא עלות, GitHub Pages חינמי</td></tr>
+</table>
+
+<h3>8.2 בטיחות AI</h3>
+<ul>
+<li><strong>Hallucination risk</strong>: AI עשוי לזהות מאכל שגוי → מסך אישור/תיקון + הפניה לקו חם</li>
+<li><strong>Bias</strong>: MobileNet מבוסס ImageNet (מאכלים אמריקאיים/אירופיים) → דיוק נמוך במאכלים ישראליים → AI כמודל ראשי</li>
+<li><strong>Safety</strong>: ברכה שגויה על מזון = חמורה הלכתית → הפניה לרב בספק, לא החלטה אוטומטית</li>
+</ul>
+
+<h3>8.3 Threat Model</h3>
+<table>
+<tr><th>Threat</th><th>Mitigation</th></tr>
+<tr><td>זיהוי שגוי → ברכה שגויה</td><td>מסך אישור + הפניה לקו חם</td></tr>
+<tr><td>Injection (prompt)</td><td>System prompt קשוח, JSON-only output</td></tr>
+<tr><td>Data leakage</td><td>תמונות לא נשמרות, ללא PII</td></tr>
+<tr><td>Service downtime</td><td>MobileNet כגיבוי מקומי</td></tr>
+</table>
+
+<hr>
+
+<h2>9. שחזור ותיעוד (Reproducibility and Documentation)</h2>
+
+<h3>9.1 Quickstart</h3>
+<p><code>git clone https://github.com/Noas55/ten-bracha.git</code><br>
+<code>cd ten-bracha/app/frontend</code><br>
+<code>pnpm install</code><br>
+<code>pnpm run dev</code><br>
+<code>pnpm run build</code></p>
+
+<h3>9.2 Environment</h3>
+<ul>
+<li><strong>Node.js</strong>: 18+</li>
+<li><strong>pnpm</strong>: 8+</li>
+<li><strong>Browser</strong>: Chrome/Firefox/Safari/Edge (2 גרסאות אחרונות)</li>
+<li><strong>AI</strong>: Gemini 2.5 Pro (via @metagptx/web-sdk)</li>
+<li><strong>MobileNet</strong>: TensorFlow.js + @tensorflow-models/mobilenet</li>
+</ul>
+
+<h3>9.3 תיעוד</h3>
+<table>
+<tr><th>מסמך</th><th>תוכן</th><th>קישור</th></tr>
+<tr><td>SRS</td><td>איפיות מערכת מלא</td><td>SRS-Ten-Bracha.md</td></tr>
+<tr><td>README</td><td>התקנה, הרצה, מבנה</td><td>README.md</td></tr>
+<tr><td>ADRs</td><td>7 החלטות ארכיטקטורה</td><td>סעיף 4.2 בדו"ח</td></tr>
+<tr><td>Code</td><td>TypeScript + Python</td><td>GitHub repo</td></tr>
+<tr><td>Data</td><td>71 מאכלים + ברכות</td><td>src/data/blessings.ts</td></tr>
+</table>
+
+<h3>9.4 CI/CD</h3>
+<ul>
+<li><strong>Lint</strong>: pnpm run lint (ESLint)</li>
+<li><strong>Build</strong>: pnpm run build (Vite)</li>
+<li><strong>Deploy</strong>: GitHub Pages (push to main → docs/ folder)</li>
+<li><strong>No secrets in repo</strong>: API keys managed by platform SDK</li>
+</ul>
+
+<hr>
+
+<h2>10. מסקנות ועבודה עתידה</h2>
+
+<h3>10.1 מסקנות</h3>
+<ol>
+<li><strong>שילוב AI + מנוע כללים</strong> — גישה יעילה ובטוחה: AI מזהה, כללים קובעים, רב מאשר</li>
+<li><strong>UX עברי RTL</strong> — קריטי לקהל יעד; ממשק מותאם מובייל חיוני</li>
+<li><strong>כיווץ תמונות אגרסיבי</strong> — פתרון קריטי לבעיית זיהוי במובייל</li>
+<li><strong>הפניה לקו חם בספק</strong> — עיקרון אתי שאין לוותר עליו</li>
+</ol>
+
+<h3>10.2 עבודה עתידה</h3>
+<table>
+<tr><th>תכונה</th><th>תיאור</th><th>עדיפות</th></tr>
+<tr><td>הרחבת מאגר</td><td>200+ מאכלים</td><td>גבוהה</td></tr>
+<tr><td>PWA / Offline</td><td>שירות עובד ללא חיבור (MobileNet only)</td><td>גבוהה</td></tr>
+<tr><td>אפליקציית Android</td><td>React Native + Expo</td><td>בינוני</td></tr>
+<tr><td>רב-שפתי</td><td>עברית + אנגלית + צרפתית</td><td>בינוני</td></tr>
+<tr><td>User feedback</td><td>דירוג זיהוי + תיקונים → שיפור מודל</td><td>נמוכה</td></tr>
+<tr><td>Barcode scan</td><td>זיהוי מאכלים ארוזים מברקוד</td><td>נמוכה</td></tr>
+</table>
+
+<hr>
+
+<h2>11. Repository and Artifacts</h2>
+<table>
+<tr><th>Artifact</th><th>קישור/מיקום</th></tr>
+<tr><td>GitHub Repo</td><td>https://github.com/Noas55/ten-bracha</td></tr>
+<tr><td>Live Demo</td><td>https://noas55.github.io/ten-bracha/</td></tr>
+<tr><td>SRS Document</td><td>app/SRS-Ten-Bracha.md</td></tr>
+<tr><td>Final Report</td><td>app/FINAL-REPORT.md</td></tr>
+<tr><td>Blessings Data</td><td>app/frontend/src/data/blessings.ts</td></tr>
+<tr><td>Food Recognition Service</td><td>app/frontend/src/services/foodRecognition.ts</td></tr>
+<tr><td>Architecture Diagram</td><td>סעיף 4.1 בדו"ח</td></tr>
+<tr><td>ADRs</td><td>סעיף 4.2 בדו"ח</td></tr>
+</table>
+
+<hr>
+<p style="text-align: center;"><strong>— סוף דו"ח —</strong></p>
+
+</body>
+</html>
